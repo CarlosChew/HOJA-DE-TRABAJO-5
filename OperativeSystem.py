@@ -12,13 +12,15 @@
 
 #MODULES USED ON THIS WORKSHEET 
 import random
-
 import simpy
 
+#FUNCTION DEFINES AS SIMULATION, WHICH CONTAINS PARAMETERS 
 def simulation(processName,x,waiting,CPU):
+
+    #VARIABLE WHICH NOT HAS BEEN DECLARED 
     global wholeProcess 
 
-   
+    #RETURNS A VALUE 
     yield x.timeout(waiting)
     
  
@@ -40,7 +42,7 @@ def simulation(processName,x,waiting,CPU):
            
 
 
-
+#IT NOW SIMULATES DE OPERATIVE SYSTEM 
 x = simpy.Environment()
 CPU = simpy.Resource(x,capacity = 1)
 random.seed(10) 
