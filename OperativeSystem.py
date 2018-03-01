@@ -25,17 +25,17 @@ def simulation(processName,x,waiting,CPU):
     ready = x.now
 
     running = random.randint(1, 10)
-    print ('%s llega a las %f necesita %d para hechar gasolina' % (processName,ready,running))
+    print ('%s Process %f needs %d ammount of RAM' % (processName,ready,running))
     
 
     with CPU.request() as CPUturn:
         yield CPUturn     
         yield x.timeout(running) 
-        print ('%s sale de gasolinera a las %f' % (processName, x.now))
+        print ('%s Finish the process on %f' % (processName, x.now))
         
         
     totalTime = x.now - ready
-    print ('%s se tardo %f' % (processName, totalTime))
+    print ('%s It takes %f' % (processName, totalTime))
     wholeProcess = wholeProcess + totalTime
            
 
@@ -46,8 +46,8 @@ CPU = simpy.Resource(x,capacity = 1)
 random.seed(10) 
 wholeProcess = 0
 for i in range(5):
-    x.process(simulation('carro %d'%i,x,random.expovariate(1.0/10),CPU))
+    x.process(simulation('Process %d'%i,x,random.expovariate(1.0/10),CPU))
 
 x.run(until=50)  
 
-print ("tiempo promedio por vehículo es: ", wholeProcess/5.0)
+print ("The average time of the process is: ", wholeProcess/5.0)
