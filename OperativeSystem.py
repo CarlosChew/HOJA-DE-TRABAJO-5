@@ -11,41 +11,43 @@
 
 
 #MODULES USED ON THIS WORKSHEET 
-import random 
+import random
+
 import simpy
 
-def Process(ProcessName, x, Waiting, CPU):
+def simulation(processName,x,waiting,CPU):
+    global wholeProcess 
 
-    #GLOBAL VARIABLE, DECLARED OUTISDE THE FUNCTION 
-    global OperativeSystem
+   
+    yield x.timeout(waiting)
+    
+ 
+    ready = x.now
 
-    #RETURN A GENERATOR 
-    yield x.timeout(Waiting)
+    running = random.randint(1, 10)
+    print ('%s llega a las %f necesita %d para hechar gasolina' % (processName,ready,running))
+    
 
-    #READY 
-    Ready = x.now
+    with CPU.request() as CPUturn:
+        yield CPUturn     
+        yield x.timeout(running) 
+        print ('%s sale de gasolinera a las %f' % (processName, x.now))
+        
+        
+    totalTime = x.now - ready
+    print ('%s se tardo %f' % (processName, totalTime))
+    wholeProcess = wholeProcess + totalTime
+           
 
-    ProcessTime = random.randit(1, 10)
-    print ('%s llega a las %f necesita %d para hechar gasolina' % (ProcessName,ArriveTime,ProcessTime))
 
-    with CPU.request() as queue:
-
-        yield queue
-        yield x.timeout(ProcessTime)
-        print ('%s sale de gasolinera a las %f' % (ProcessName, x.now))
-
-    WholeProcessTime = x.now - Ready
-    print ('%s se tardo %f' % (ProcessName, WholrProcessTime))
-    OperativeSystem = OperativeSystem + WholeProcessTime
 
 x = simpy.Environment()
 CPU = simpy.Resource(x,capacity = 1)
-random.seed(10)
-
-OperativeSystem = 0
+random.seed(10) 
+wholeProcess = 0
 for i in range(5):
-    x.operation(Process('carro %d'%i,x,random.expovariate(1.0/10),CPU))
-    
+    x.process(simulation('carro %d'%i,x,random.expovariate(1.0/10),CPU))
 
-x.run(until=50)
-print ("tiempo promedio por vehículo es: ", OperativeSystem/5.0)
+x.run(until=50)  
+
+print ("tiempo promedio por vehículo es: ", wholeProcess/5.0)
