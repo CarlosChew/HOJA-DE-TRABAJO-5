@@ -31,18 +31,18 @@ def simulation(processName,x,waiting,CPU):
     ready = x.now
 
 
-    running = random.randint(1, 200)
-    print ('%s /Process %f needs %d ammount of RAM' % (processName,ready,running))
+    running = random.randint(1, 10)
+    print ('%s  is ready on %f , it also needs %d of RAM to complete process' % (processName,ready,running))
     
 
     with CPU.request() as CPUturn:
         yield CPUturn     
         yield x.timeout(running) 
-        print ('%s /Finish the process on %f' % (processName, x.now))
+        print ('%s  get out of the CPU %f'% (processName, x.now))
         
         
     totalTime = x.now - ready
-    print ('%s /It takes %f' % (processName, totalTime))
+    print ('%s  takes %f'% (processName, totalTime))
     wholeProcess = wholeProcess + totalTime
            
 
@@ -52,7 +52,7 @@ x = simpy.Environment()
 CPU = simpy.Resource(x,capacity = 1)
 random.seed(10) 
 wholeProcess = 0
-for i in range(25):#RANGE 
+for i in range(5):#RANGE 
     x.process(simulation('Process %d'%i,x,random.expovariate(1.0/10),CPU)) 
 
 #IT RUNS THE SIMULATION UNTIL 50 VALULES 
@@ -61,4 +61,4 @@ x.run(until=50)
 print ("")
 print ("")
 print ("---AVERAGE PROCESS---")
-print ("The average time of the process is: ", wholeProcess/25.0)
+print ("The average time of the process is: ", wholeProcess/5.0)
